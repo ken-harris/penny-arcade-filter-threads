@@ -10,7 +10,6 @@
 
 let threads = Array.from(document.getElementsByClassName("Title")); // Threads on the page
 let ignoredThreads = localStorage.getItem('hideThreads') ? JSON.parse(localStorage.getItem('hideThreads')) : []; // Grabs thread IDs that have already been clicked, or empty list if none.
-let displayTable = false;
 
 const buttonStyle = "float:right; border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
 const deleteButtonStyle = "border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
