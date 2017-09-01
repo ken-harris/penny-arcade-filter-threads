@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  Filters any thread out that you wish.
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
@@ -10,9 +10,14 @@
 
 let threads = Array.from(document.getElementsByClassName("Title")); // Threads on the page
 let ignoredThreads = localStorage.getItem('hideThreads') ? JSON.parse(localStorage.getItem('hideThreads')) : []; // Grabs thread IDs that have already been clicked, or empty list if none.
+let displayTable = false;
 
 const buttonStyle = "float:right; border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
 const deleteButtonStyle = "border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
+
+/*
+    ACTIONS:
+*/
 
 const addNewFilter = function(threadId, title){
     let filterTable = document.getElementById("filterTable");
@@ -89,6 +94,22 @@ const addFilter = function(threadId, thread){
         addNewFilter(threadId, thread.innerText);
 };
 
+const displayOrHideFilters = function(){
+    let table = document.getElementById("filterTable");
+    let expandButton = document.getElementById("expandButton");
+    if(table.style.display === "table"){
+        table.style.display = "none";
+        expandButton.innerText = "DISPLAY FILTERS";
+    } else {
+        table.style.display = "table";
+        expandButton.innerText = "HIDE FILTERS";
+    }
+};
+
+/*
+    DISPLAY:
+*/
+
 const addFilterToThreads = function(){
     // Add X to each thread so you can remove them without having to add the titles manually
     threads.forEach(function(thread){
@@ -119,16 +140,30 @@ const addFilterToThreads = function(){
 
 const buildFilterTable = function(){
     // Create table at the bottom that allows you to manage the filters
-    let body = document.getElementById("Body");
+    let footCrumbs = document.getElementById("FootCrumbs");
+    let expandDiv = document.createElement("div");
+    let expandButton = document.createElement("button");
+    expandButton.setAttribute('id', 'expandButton');
+    expandButton.style.background = "#fefefe";
+    expandButton.style.border = "2px solid black";
+    expandButton.style.padding = "10px";
+    expandButton.style.marginLeft = "20px";
+    expandButton.style.width = "150px";
+    expandButton.innerHTML = "DISPLAY FILTERS";
+    expandButton.addEventListener("click", displayOrHideFilters);
+    expandDiv.appendChild(expandButton);
+    footCrumbs.appendChild(expandDiv);
     let table = document.createElement("TABLE");
     table.setAttribute('id', 'filterTable');
+    table.style.display = "none";
+    table.style.marginTop = "10px";
     table.style.marginLeft = "20px";
     table.style.background = "white";
     table.style.border = "1px solid black";
     table.style.borderSpacing = "10px";
     table.style.width = "1200px";
 
-    body.appendChild(table);
+    footCrumbs.appendChild(table);
     let header = table.createTHead();
     let row = header.insertRow(0);
     let cell = row.insertCell();
@@ -150,7 +185,7 @@ const buildFilterTable = function(){
         cell = row.insertCell();
         cell.innerHTML = ignoredThread.id;
         cell = row.insertCell();
-        cell.innerHTML = ignoredThread.title;
+        cell.innerHTML = "<a style='color:black !important;text-decoration:underline' href='https://forums.penny-arcade.com/discussion/" + ignoredThread.id + "/#latest'>" + ignoredThread.title + "</a>";
         cell = row.insertCell();
         cell.style.textAlign = "center";
         cell.appendChild(deleteButton);
