@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      1.3
-// @description  Filters any thread out that you wish.
+// @version      2.0
+// @description  Filters any thread out that you wish. Now supports cross-browser synchronization!
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
 // @grant        none
