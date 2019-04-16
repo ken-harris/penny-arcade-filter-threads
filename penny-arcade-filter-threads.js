@@ -227,13 +227,13 @@ const buildFilterTable = function(){
 
 const mergeFilters = function(){
     getFilteredThreads().then((res) => {
-        let aws_session = JSON.parse(res.Item.session.S);
+        let aws_session = res.Item ? JSON.parse(res.Item.session.S) : [];
         let local_session = JSON.parse(localStorage.getItem('hideThreads')) == null? [] : JSON.parse(localStorage.getItem('hideThreads'));
         let combined_ids = aws_session.map((ses) => { return ses.id }).concat(local_session.map((ses) => {return ses.id}));
         let unique_ids = Array.from(new Set(combined_ids)); // Basically converts the list to a set and back to a list. Removes any duplicate IDs.
 
         if(!(aws_session.length === unique_ids.length && local_session.length === unique_ids.length)){ // absolutely sure that they are different at this point
-            if(confirm("Are you sure you want to merge the following sessions?\n\nLocal: "+ localStorage.getItem('hideThreads') + "\n\nSaved: " + res.Item.session.S)){
+            if(confirm("Are you sure you want to merge the following sessions?\n\nLocal: "+ localStorage.getItem('hideThreads') + "\n\nSaved: " + JSON.stringify(aws_session))){
                 // Merge the two.
                 let mergedFilteredList = [];
                 unique_ids.forEach((id) => {
@@ -247,6 +247,7 @@ const mergeFilters = function(){
                 ignoredThreads = mergedFilteredList;
                 addFilterToThreads();
                 buildFilterTable();
+                updateFilteredThreads();
             }
         }
     });
@@ -282,10 +283,14 @@ const updateFilteredThreads = function(){
 (function() {
     'use strict';
     if(pathName.indexOf('categories') !== -1){
-        // Up-to-Date Version
-        //getPathName();
+        // Check if previous version, if so then clear the old threads.
+
+        if(ignoredThreads && ignoredThreads.length > 0 && ignoredThreads[0].path == undefined){
+            alert("You were using an old version of the PA Filter Threads tool. This new version now tracks your thread filters based on the subforum. This means that the tool will need to purge your threads and you will need to start over!");
+            localStorage.setItem('hideThreads', "[]");
+        }
         addButtonsAndTableToPage();
-        // Apply filters
+
         let lastUpdated = sessionStorage.getItem('lastUpdated');
 
         if(lastUpdated === null || new Date() - new Date(lastUpdated) >= 86400000){
