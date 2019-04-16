@@ -288,6 +288,7 @@ const updateFilteredThreads = function(){
         if(ignoredThreads && ignoredThreads.length > 0 && ignoredThreads[0].path == undefined){
             alert("You were using an old version of the PA Filter Threads tool. This new version now tracks your thread filters based on the subforum. This means that the tool will need to purge your threads and you will need to start over!");
             localStorage.setItem('hideThreads', "[]");
+            ignoredThreads = [];
         }
         addButtonsAndTableToPage();
 
