@@ -22,8 +22,8 @@ const deleteButtonStyle = "border:none; background:transparent; color:red; font-
 */
 
 const addNewFilter = function(threadId, title){
-    let filterTable = document.getElementById("filterTable");
-    let row = filterTable.insertRow();
+    let threadTable = document.getElementById("threadTable");
+    let row = threadTable.insertRow();
     let cell = row.insertCell();
     cell.innerText = threadId;
     cell = row.insertCell();
@@ -135,6 +135,7 @@ const addTextFilter = function(text){
     }
     addNewTextFilter(text);
     addFilterToThreads();
+    updateFilteredThreads();
 };
 
 const removeTextFilter = function(evt){
@@ -174,6 +175,7 @@ const removeTextFilter = function(evt){
             button.addEventListener("click", addFilter.bind(this, threadId, ft));
         }
     });
+    updateFilteredThreads(); // update AWS
 };
 
 const checkForEnter = function(e){
@@ -408,7 +410,8 @@ const getFilteredThreads = function(){
         url: "https://hta33a0i4a.execute-api.us-east-2.amazonaws.com/default/PAStoreSession",
         method: "GET",
         data: {
-            username: username
+            username: username,
+            version: '2'
         }
     };
     return $.ajax(settings);
@@ -421,8 +424,10 @@ const updateFilteredThreads = function(){
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({
+            version: '2',
             username: username,
-            session: JSON.parse(localStorage.getItem('hideThreads'))
+            session: JSON.parse(localStorage.getItem('hideThreads')),
+            textFilters: JSON.parse(localStorage.getItem('ignoreTitles'))
         }),
         dataType: "json"
     };
@@ -450,7 +455,9 @@ const updateFilteredThreads = function(){
             sessionStorage.setItem('lastUpdated', new Date());
             getFilteredThreads().then(function(res){
                 ignoredThreads = res.Item ? JSON.parse(res.Item.session.S) : [];
+                ignoredThreadTitles = res.Item ? JSON.parse(res.Item.textFilters.S) : [];
                 localStorage.setItem('hideThreads', JSON.stringify(ignoredThreads));// Overwrites threads, be cautious!
+                localStorage.setItem('ignoreTitles', JSON.stringify(ignoredThreadTitles));
                 addFilterToThreads();
                 buildFilterTable();
                 buildTitleTable();
