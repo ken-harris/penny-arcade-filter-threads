@@ -54,7 +54,7 @@ const addNewTextFilter = function(text){
 const removeFilter = function(evt){
     let rowNode = evt.target.parentNode.parentNode;
     let removeThreadId = rowNode.cells[0].innerText;
-    document.getElementById("filterTable").deleteRow(rowNode.rowIndex);
+    document.getElementById("threadTable").deleteRow(rowNode.rowIndex);
     // Look for threadId in the hideThreads localStorage
     let hiddenThreads = JSON.parse(localStorage.getItem('hideThreads'));
     let removeIndex = 0;
