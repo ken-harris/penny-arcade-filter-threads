@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.0.1
 // @description  Filters any thread out that you wish. Now supports cross-browser synchronization!
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
@@ -17,6 +17,17 @@ let ignoredThreadTitles = localStorage.getItem("ignoreTitles") ? JSON.parse(loca
 const buttonStyle = "float:right; border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
 const deleteButtonStyle = "border:none; background:transparent; color:red; font-size:18px; padding-right:15px; cursor:pointer";
 
+/* X button declaration using font-awesome */
+//add fa css to document
+let link = window.document.createElement('link');
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css';
+document.getElementsByTagName("HEAD")[0].appendChild(link);
+
+//x button itself
+let delBtnHtml = '<i class="fas fa-times" style="pointer-events: none;"> </i>';
+
 /*
     ACTIONS:
 */
@@ -29,7 +40,7 @@ const addNewFilter = function(threadId, title){
     cell = row.insertCell();
     cell.innerText = title;
     let deleteButton = document.createElement('button');
-    deleteButton.innerHTML = "X";
+    deleteButton.innerHTML = delBtnHtml;
     deleteButton.setAttribute("style", deleteButtonStyle);
     deleteButton.addEventListener("click", removeFilter);
     cell = row.insertCell();
@@ -43,7 +54,7 @@ const addNewTextFilter = function(text){
     let cell = row.insertCell();
     cell.innerText = text;
     let deleteButton = document.createElement('button');
-    deleteButton.innerHTML = "X";
+    deleteButton.innerHTML = delBtnHtml;
     deleteButton.setAttribute("style", deleteButtonStyle);
     deleteButton.addEventListener("click", removeTextFilter);
     cell = row.insertCell();
@@ -78,7 +89,7 @@ const removeFilter = function(evt){
         if(threadDiv.children.length == 1){
             // This means the button doesn't exist yet and we need to place it
             let button = document.createElement("button");
-            button.innerHTML = "X";
+            button.innerHTML = delBtnHtml;
             button.setAttribute("style", buttonStyle);
             threadDiv.style.paddingTop = "10px";
             // Grab the div Wrap
@@ -164,7 +175,7 @@ const removeTextFilter = function(evt){
         if(threadDiv.children.length == 1){
             // This means the button doesn't exist yet and we need to place it
             let button = document.createElement("button");
-            button.innerHTML = "X";
+            button.innerHTML = delBtnHtml;
             button.setAttribute("style", buttonStyle);
             threadDiv.style.paddingTop = "10px";
             // Grab the div Wrap
@@ -202,10 +213,11 @@ const addTextFilterToPage = function(){
     filterInput.addEventListener("keyup", checkForEnter);
     filterDiv.appendChild(filterInput);
 
-    let questionImg = document.createElement("img");
-    questionImg.setAttribute("src", "data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJxdWVzdGlvbi1jaXJjbGUiIGNsYXNzPSJzdmctaW5saW5lLS1mYSBmYS1xdWVzdGlvbi1jaXJjbGUgZmEtdy0xNiIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik01MDQgMjU2YzAgMTM2Ljk5Ny0xMTEuMDQzIDI0OC0yNDggMjQ4UzggMzkyLjk5NyA4IDI1NkM4IDExOS4wODMgMTE5LjA0MyA4IDI1NiA4czI0OCAxMTEuMDgzIDI0OCAyNDh6TTI2Mi42NTUgOTBjLTU0LjQ5NyAwLTg5LjI1NSAyMi45NTctMTE2LjU0OSA2My43NTgtMy41MzYgNS4yODYtMi4zNTMgMTIuNDE1IDIuNzE1IDE2LjI1OGwzNC42OTkgMjYuMzFjNS4yMDUgMy45NDcgMTIuNjIxIDMuMDA4IDE2LjY2NS0yLjEyMiAxNy44NjQtMjIuNjU4IDMwLjExMy0zNS43OTcgNTcuMzAzLTM1Ljc5NyAyMC40MjkgMCA0NS42OTggMTMuMTQ4IDQ1LjY5OCAzMi45NTggMCAxNC45NzYtMTIuMzYzIDIyLjY2Ny0zMi41MzQgMzMuOTc2QzI0Ny4xMjggMjM4LjUyOCAyMTYgMjU0Ljk0MSAyMTYgMjk2djRjMCA2LjYyNyA1LjM3MyAxMiAxMiAxMmg1NmM2LjYyNyAwIDEyLTUuMzczIDEyLTEydi0xLjMzM2MwLTI4LjQ2MiA4My4xODYtMjkuNjQ3IDgzLjE4Ni0xMDYuNjY3IDAtNTguMDAyLTYwLjE2NS0xMDItMTE2LjUzMS0xMDJ6TTI1NiAzMzhjLTI1LjM2NSAwLTQ2IDIwLjYzNS00NiA0NiAwIDI1LjM2NCAyMC42MzUgNDYgNDYgNDZzNDYtMjAuNjM2IDQ2LTQ2YzAtMjUuMzY1LTIwLjYzNS00Ni00Ni00NnoiPjwvcGF0aD48L3N2Zz4=");
-    questionImg.style.height = "20px";
-    questionImg.style.top = "5px";
+    let questionImg = document.createElement("i");
+    questionImg.setAttribute("class","fas fa-question-circle");
+    questionImg.style.fontSize = "20px";
+    questionImg.style.top = "2.5px";
+    questionImg.style.left = "5px";
     questionImg.style.position = "relative";
     questionImg.style.cursor = "help";
     questionImg.title = "This feature allows you to filter based on text you wish to ignore. This is especially helpful if you want to hide repeat threads.";
@@ -235,7 +247,7 @@ const addFilterToThreads = function(){
         }
         if(!ignore){
             let button = document.createElement("button");
-            button.innerHTML = "X";
+            button.innerHTML = delBtnHtml;
             button.setAttribute("style", buttonStyle);
 
             // Grab div containing the thread title
@@ -338,7 +350,7 @@ const buildFilterTable = function(){
     Array.from(tbody.children).forEach((child) => { tbody.removeChild(child); });
     ignoredThreads.filter(thread => thread.path === pathName).forEach(function(ignoredThread, count){ // Display ONLY the ones that are filtered on the current page.
         let deleteButton = document.createElement('button');
-        deleteButton.innerHTML = "X";
+        deleteButton.innerHTML = delBtnHtml;
         deleteButton.style.cursor = "pointer";
         deleteButton.setAttribute("style", deleteButtonStyle);
         deleteButton.addEventListener("click", removeFilter);
@@ -360,7 +372,7 @@ const buildTitleTable = function(){
     Array.from(tbody.children).forEach((child) => { tbody.removeChild(child); });
     ignoredThreadTitles.forEach(function(ignoredTitle, count){ // Display ONLY the ones that are filtered on the current page.
         let deleteButton = document.createElement('button');
-        deleteButton.innerHTML = "X";
+        deleteButton.innerHTML = delBtnHtml;
         deleteButton.setAttribute("style", deleteButtonStyle);
         deleteButton.addEventListener("click", removeTextFilter);
         let row = tbody.insertRow();
