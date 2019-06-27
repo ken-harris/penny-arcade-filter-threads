@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      2.0.1
+// @version      2.0.2
 // @description  Filters any thread out that you wish. Now supports cross-browser synchronization!
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
@@ -14,7 +14,7 @@ let threads = Array.from(document.getElementsByClassName("Title")); // Threads o
 let ignoredThreads = localStorage.getItem('hideThreads') ? JSON.parse(localStorage.getItem('hideThreads')) : []; // Grabs thread IDs that have already been clicked, or empty list if none.
 let ignoredThreadTitles = localStorage.getItem("ignoreTitles") ? JSON.parse(localStorage.getItem('ignoreTitles')) : []; // Grabs the user-defined thread title filters
 
-const buttonStyle = "float:right; border:none; background:transparent; color:red; font-size:18px; padding-right:15px";
+const buttonStyle = "float:right; border:none; background:transparent; color:red; font-size:18px; padding-right:15px; cursor:pointer";
 const deleteButtonStyle = "border:none; background:transparent; color:red; font-size:18px; padding-right:15px; cursor:pointer";
 
 /* X button declaration using font-awesome */
@@ -26,7 +26,7 @@ link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.c
 document.getElementsByTagName("HEAD")[0].appendChild(link);
 
 //x button itself
-let delBtnHtml = '<i class="fas fa-times" style="pointer-events: none;"> </i>';
+let delBtnHtml = '<i class="fas fa-times"> </i>';
 
 /*
     ACTIONS:
@@ -63,7 +63,7 @@ const addNewTextFilter = function(text){
 };
 
 const removeFilter = function(evt){
-    let rowNode = evt.target.parentNode.parentNode;
+    let rowNode = evt.target.nodeName === 'BUTTON' ? evt.target.parentNode.parentNode : evt.target.parentNode.parentNode.parentNode;
     let removeThreadId = rowNode.cells[0].innerText;
     document.getElementById("threadTable").deleteRow(rowNode.rowIndex);
     // Look for threadId in the hideThreads localStorage
@@ -150,7 +150,7 @@ const addTextFilter = function(text){
 };
 
 const removeTextFilter = function(evt){
-    let rowNode = evt.target.parentNode.parentNode;
+    let rowNode = evt.target.nodeName === 'BUTTON' ? evt.target.parentNode.parentNode : evt.target.parentNode.parentNode.parentNode;
     let removeTextTitle = rowNode.cells[0].innerText;
     // Remove the row from the table
     document.getElementById("titleTable").deleteRow(rowNode.rowIndex);
