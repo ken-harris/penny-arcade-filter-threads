@@ -8,7 +8,7 @@
 // @grant        none
 // ==/UserScript==
 
-let pathName = window.location.pathname; // usually: /categories/<subforum-name>
+let pathName = window.location.pathname.replace(/\/p\d+/g,""); // usually: /categories/<subforum-name>, removes page number
 let username = document.getElementsByClassName("Username")[0].innerText; // Avoiding using jQuery here, even though I end up using AJAX later...
 let threads = Array.from(document.getElementsByClassName("Title")); // Threads on the page
 let ignoredThreads = localStorage.getItem('hideThreads') ? JSON.parse(localStorage.getItem('hideThreads')) : []; // Grabs thread IDs that have already been clicked, or empty list if none.
@@ -348,7 +348,7 @@ const buildFilterTable = function(){
     let tbody = threadTable.getElementsByTagName('tbody')[0] === undefined ? threadTable.createTBody() : threadTable.getElementsByTagName('tbody')[0];
     // Rebuild the tbody
     Array.from(tbody.children).forEach((child) => { tbody.removeChild(child); });
-    ignoredThreads.filter(thread => thread.path === pathName).forEach(function(ignoredThread, count){ // Display ONLY the ones that are filtered on the current page.
+    ignoredThreads.filter(thread => thread.path.replace(/\/p\d+/g,"") === pathName).forEach(function(ignoredThread, count){ // Display ONLY the ones that are filtered on the current page.
         let deleteButton = document.createElement('button');
         deleteButton.innerHTML = delBtnHtml;
         deleteButton.style.cursor = "pointer";
