@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      2.0.2
+// @version      2.0.3
 // @description  Filters any thread out that you wish. Now supports cross-browser synchronization!
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
@@ -9,7 +9,6 @@
 // ==/UserScript==
 
 let pathName = window.location.pathname.replace(/\/p\d+/g,""); // usually: /categories/<subforum-name>, removes page number
-let username = document.getElementsByClassName("Username")[0].innerText; // Avoiding using jQuery here, even though I end up using AJAX later...
 let threads = Array.from(document.getElementsByClassName("Title")); // Threads on the page
 let ignoredThreads = localStorage.getItem('hideThreads') ? JSON.parse(localStorage.getItem('hideThreads')) : []; // Grabs thread IDs that have already been clicked, or empty list if none.
 let ignoredThreadTitles = localStorage.getItem("ignoreTitles") ? JSON.parse(localStorage.getItem('ignoreTitles')) : []; // Grabs the user-defined thread title filters
@@ -422,7 +421,7 @@ const getFilteredThreads = function(){
         url: "https://hta33a0i4a.execute-api.us-east-2.amazonaws.com/default/PAStoreSession",
         method: "GET",
         data: {
-            username: username,
+            username: document.getElementsByClassName("Username")[0].innerText,
             version: '2'
         }
     };
@@ -437,7 +436,7 @@ const updateFilteredThreads = function(){
         contentType: "application/json",
         data: JSON.stringify({
             version: '2',
-            username: username,
+            username: document.getElementsByClassName("Username")[0].innerText,
             session: JSON.parse(localStorage.getItem('hideThreads')),
             textFilters: JSON.parse(localStorage.getItem('ignoreTitles'))
         }),
