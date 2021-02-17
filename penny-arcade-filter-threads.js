@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Penny-Arcade Filter Threads
 // @namespace    http://tampermonkey.net/
-// @version      2.0.3
+// @version      2.0.4
 // @description  Filters any thread out that you wish. Now supports cross-browser synchronization!
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
@@ -234,10 +234,11 @@ const addFilterToThreads = function(){
                 return true;
             }
         });
+        //console.log('ignore ' + thread.innerText + "? ", ignore);
         if(!ignore) {
             // Need to check if the title contains any of the text filters.
             ignore = ignoredThreadTitles.some((ignoredTitle) => {
-                let threadTitle = thread.innerText.toLowerCase();
+                let threadTitle = thread.text.toLowerCase();
                 if(threadTitle.indexOf(ignoredTitle.toLowerCase()) !== -1){
                     thread.parentNode.parentNode.parentNode.style.display = "none";
                     return true;
