@@ -6,6 +6,8 @@
 // @author       urahonky
 // @match        https://forums.penny-arcade.com/*
 // @grant        none
+// @downloadURL  https://github.com/ken-harris/penny-arcade-filter-threads/raw/main/script.user.js
+// @updateURL    https://github.com/ken-harris/penny-arcade-filter-threads/raw/main/script.user.js
 // ==/UserScript==
 
 let pathName = window.location.pathname.replace(/\/p\d+/g,""); // usually: /categories/<subforum-name>, removes page number
