@@ -484,4 +484,6 @@ const updateFilteredThreads = function(){
         // Remove the Draft Button from the page
         document.getElementsByClassName("Buttons")[0].removeChild(document.getElementsByClassName("DraftButton")[0])
     }
+    // Set autosave to false
+    gdn.meta.community.drafts.autosave = false;
 })();
